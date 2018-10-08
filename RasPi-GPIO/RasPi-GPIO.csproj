@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>RasPi_GPIO</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="新しいフォルダー\" />
+  </ItemGroup>
+
+</Project>
