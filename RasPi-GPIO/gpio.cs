@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 
+
 namespace RasPi_GPIO
 {
 	public class GPIO
@@ -10,6 +11,41 @@ namespace RasPi_GPIO
 		private int _pinNum;
 		private string _pinDir;
 
+        private int _pinValue;
+        /// <summary>
+        /// ピンの値 -Pin value-
+        /// </summary>
+        public int PinValue
+        {
+            get
+            {
+                //return _pinValue;
+                return GetPinValue();
+            }
+            set
+            {
+                _pinValue = value;
+                SetPinValue(value);
+            }
+        }
+
+        private int _pinDirect;
+        /// <summary>
+        /// ピンのモードを設定　-Setting Pin mode(Direction)- 1=output,0=input
+        /// </summary>
+        public int PinDirect
+        {
+            get
+            {
+                return GetPinDirection();
+            }
+            set
+            {
+                _pinDirect = value;
+                SetPinDirection(value);
+            }
+        }
+
 		/// <summary>
 		/// インスタンス作成 -Create Instance-
 		/// </summary>
@@ -18,6 +54,7 @@ namespace RasPi_GPIO
 		{
 			_pinNum = pinNum;
 			_pinDir = $"{gpioDir}/gpio{pinNum}";
+            PinActivate();
 		}
 
 		/// <summary>
@@ -39,9 +76,14 @@ namespace RasPi_GPIO
 		public void SetPinDirection(int mode)
 		{
 			string direct_pin = $"{_pinDir}/direction";
-			string smode = (mode == 1) ? "In" : "Out";
+			string smode = (mode == 1) ? "in" : "out";
 			PinWrite(direct_pin, smode);
 		}
+        public int GetPinDirection()
+        {
+            string direct_pin = $"{_pinDir}/direction";
+            return PinRead(direct_pin) == "in" ? 1 : 0;
+        }
 
 		/// <summary>
 		/// ピンの状態を出力
@@ -50,7 +92,7 @@ namespace RasPi_GPIO
 		public int GetPinValue()
 		{
 			string value_pin = $"{_pinDir}/value";
-			return Convert.ToInt32(File.ReadAllText(value_pin));
+			return Convert.ToInt32(PinRead(value_pin));
 		}
 
 		/// <summary>
@@ -69,7 +111,7 @@ namespace RasPi_GPIO
 		/// <returns></returns>
 		private bool CheckPinActivate()
 		{
-			if (Directory.Exists(_pinDir)) return true;
+			if (Directory.Exists(_pinDir) == true) return true;
 			return false;
 		}
 
@@ -82,6 +124,9 @@ namespace RasPi_GPIO
 		{
 			File.WriteAllText(path, msg);
 		}
-
-	}
+        static private string PinRead(string path)
+        {
+            return File.ReadAllText(path);
+        }
+    }
 }
